@@ -1,0 +1,13 @@
+@MininalsApi_HostAddress = http://localhost:5152
+
+
+# @name login
+POST {{MininalsApi_HostAddress}}/login
+Accept: application/json
+Content-Type: application/json
+
+{
+"email" : "admin@email.com",
+"password": "123456"
+}
+
