@@ -9,6 +9,6 @@ namespace minimal_api.Domain.Interfaces
 {
     public interface IAdminService
     {
-        List<Admin> Login(LoginDto loginDto);
+        Admin? Login(LoginDto loginDto);
     }
 }
