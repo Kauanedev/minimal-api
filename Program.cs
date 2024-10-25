@@ -4,6 +4,7 @@ using MinimalApi.Dto;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// builder.Services.AddScoped<DbContext>
 
 builder.Services.AddDbContext<DbContexto>(options =>
 {
