@@ -1,9 +1,9 @@
+using minimal_api.Domain.Entities;
 using minimal_api.Domain.Interfaces;
-using MinimalApi.Dto;
-using MinimalApi.Entities;
-using MinimalApi.Infraestrutura.Db;
+using minimal_api.Domain.Dto;
+using minimal_api.Infra.Database;
 
-namespace MinimalApi.Domain.Interfaces;
+namespace Minimal_api.Domain.Services;
 
 public class AdminService : IAdminService
 {
@@ -20,4 +20,5 @@ public class AdminService : IAdminService
 
         return adm;
     }
+
 }

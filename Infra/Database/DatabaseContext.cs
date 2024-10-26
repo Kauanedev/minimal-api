@@ -1,13 +1,20 @@
 using Microsoft.EntityFrameworkCore;
-using MinimalApi.Entities;
+using minimal_api.Domain.Entities;
 
-namespace MinimalApi.Infraestrutura.Db
+namespace minimal_api.Infra.Database
 {
-    public class DbContexto(IConfiguration configuracaoAppSettings) : DbContext
+    public class DbContexto : DbContext
     {
-        private readonly IConfiguration _configuracaoAppSettings = configuracaoAppSettings;
+        private readonly IConfiguration _configuracaoAppSettings;
+
+        public DbContexto(IConfiguration configuracaoAppSettings)
+        {
+            _configuracaoAppSettings = configuracaoAppSettings;
+        }
+
 
         public DbSet<Admin> Administradores { get; set; } = default!;
+        public DbSet<Veiculo> Veiculos { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

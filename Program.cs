@@ -1,9 +1,9 @@
-using MinimalApi.Infraestrutura.Db;
 using Microsoft.EntityFrameworkCore;
-using MinimalApi.Dto;
-using MinimalApi.Domain.Interfaces;
 using minimal_api.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Minimal_api.Domain.Services;
+using minimal_api.Infra.Database;
+using minimal_api.Domain.Dto;
 
 var builder = WebApplication.CreateBuilder(args);
 
