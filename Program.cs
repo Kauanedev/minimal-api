@@ -9,6 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IAdminService, AdminService>();
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 builder.Services.AddDbContext<DbContexto>(options =>
 {
     options.UseMySql(
@@ -18,6 +21,9 @@ builder.Services.AddDbContext<DbContexto>(options =>
 });
 
 var app = builder.Build();
+
+app.MapGet("/", () => "Bem-vindo à Minimal API!");
+
 
 app.MapPost("/login",
 ([FromBody] LoginDto loginDto, IAdminService adminService) =>
@@ -32,5 +38,7 @@ app.MapPost("/login",
     }
 });
 
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.Run();
