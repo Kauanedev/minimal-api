@@ -119,6 +119,24 @@ app.MapPut("/veiculos/{id}", ([FromQuery] int id, VeiculoDto veiculoDto, IVeicul
     }
 }).WithTags("Veiculos");
 
+app.MapDelete("/veiculos/{id}", ([FromQuery] int id, IVeiculoService veiculoService) =>
+{
+    try
+    {
+        var veiculo = veiculoService.GetById(id);
+
+        if (veiculo == null) return Results.NotFound();
+
+        veiculoService.Delete(veiculo);
+
+        return Results.Ok("Veiculo deletado com sucesso!");
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+}).WithTags("Veiculos");
+
 
 #endregion
 
