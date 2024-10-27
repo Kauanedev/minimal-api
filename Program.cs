@@ -85,11 +85,33 @@ app.MapGet("/veiculos/{id}", ([FromQuery] int id, IVeiculoService veiculoService
 {
     try
     {
-        var veiculos = veiculoService.GetById(id);
+        var veiculo = veiculoService.GetById(id);
 
-        if (veiculos == null) return Results.NotFound();
+        if (veiculo == null) return Results.NotFound();
 
-        return Results.Ok(veiculos);
+        return Results.Ok(veiculo);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+}).WithTags("Veiculos");
+
+app.MapPut("/veiculos/{id}", ([FromQuery] int id, VeiculoDto veiculoDto, IVeiculoService veiculoService) =>
+{
+    try
+    {
+        var veiculo = veiculoService.GetById(id);
+
+        if (veiculo == null) return Results.NotFound();
+
+        veiculo.Nome = veiculoDto.Nome;
+        veiculo.Marca = veiculoDto.Marca;
+        veiculo.Ano = veiculoDto.Ano;
+
+        veiculoService.Update(veiculo);
+
+        return Results.Ok(veiculo);
     }
     catch (Exception ex)
     {

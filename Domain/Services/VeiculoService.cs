@@ -44,11 +44,11 @@ namespace minimal_api.Domain.Services
             return _contexto.Veiculos.Where(v => v.Id == id).FirstOrDefault();
         }
 
-        public void Update(int id, Veiculo veiculo)
+
+        public void Update(Veiculo veiculo)
         {
             _contexto.Veiculos.Update(veiculo);
             _contexto.SaveChanges();
         }
-
     }
 }

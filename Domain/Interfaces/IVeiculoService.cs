@@ -8,7 +8,7 @@ namespace minimal_api.Domain.Interfaces
         List<Veiculo> GetAll(int? page = 1, string? nome = null, string? marca = null);
         Veiculo? GetById(int id);
         void Create(Veiculo veiculo);
-        void Update(int id, Veiculo veiculo);
+        void Update(Veiculo veiculo);
         void Delete(Veiculo veiculo);
     }
 }
