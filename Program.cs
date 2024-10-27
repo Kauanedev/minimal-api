@@ -6,6 +6,7 @@ using minimal_api.Infra.Database;
 using minimal_api.Domain.Dto;
 using minimal_api.Domain.MoedlViews;
 
+#region Builder
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IAdminService, AdminService>();
@@ -22,6 +23,8 @@ builder.Services.AddDbContext<DbContexto>(options =>
 });
 
 var app = builder.Build();
+#endregion
+
 
 #region Home
 app.MapGet("/", () => Results.Json(new Home()));
@@ -43,7 +46,14 @@ app.MapPost("/administradores/login",
 });
 #endregion
 
+#region Veiculos
+
+
+#endregion
+
+#region Ap
 app.UseSwagger();
 app.UseSwaggerUI();
 
 app.Run();
+#endregion
