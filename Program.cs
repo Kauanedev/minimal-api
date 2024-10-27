@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Minimal_api.Domain.Services;
 using minimal_api.Infra.Database;
 using minimal_api.Domain.Dto;
+using minimal_api.Domain.MoedlViews;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,10 +23,13 @@ builder.Services.AddDbContext<DbContexto>(options =>
 
 var app = builder.Build();
 
-app.MapGet("/", () => "Bem-vindo à Minimal API!");
+#region Home
+app.MapGet("/", () => Results.Json(new Home()));
+#endregion
 
 
-app.MapPost("/login",
+#region Administradores 
+app.MapPost("/administradores/login",
 ([FromBody] LoginDto loginDto, IAdminService adminService) =>
 {
     if (adminService.Login(loginDto) != null)
@@ -37,6 +41,7 @@ app.MapPost("/login",
         return Results.Unauthorized();
     }
 });
+#endregion
 
 app.UseSwagger();
 app.UseSwaggerUI();
