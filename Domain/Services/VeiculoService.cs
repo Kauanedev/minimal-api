@@ -23,7 +23,7 @@ namespace minimal_api.Domain.Services
             _contexto.SaveChanges();
         }
 
-        public List<Veiculo> GetAll(int page = 1, string? nome = null, string? marca = null)
+        public List<Veiculo> GetAll(int? page = 1, string? nome = null, string? marca = null)
         {
             var query = _contexto.Veiculos.AsQueryable();
             if (!string.IsNullOrEmpty(nome))
@@ -31,10 +31,11 @@ namespace minimal_api.Domain.Services
 
             // Paginação
             int itensPorPagina = 10;
-            int skipCount = (page - 1) * itensPorPagina;
-            query = query.Skip(skipCount).Take(itensPorPagina);
-
-
+            if (page != null)
+            {
+                int skipCount = ((int)page - 1) * itensPorPagina;
+                query = query.Skip(skipCount).Take(itensPorPagina);
+            }
             return query.ToList();
         }
 

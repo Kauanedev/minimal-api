@@ -68,7 +68,18 @@ app.MapPost("/veiculos", ([FromBody] VeiculoDto veiculoDto, IVeiculoService veic
     }
 });
 
-
+app.MapGet("/veiculos", ([FromQuery] int? page, IVeiculoService veiculoService) =>
+{
+    try
+    {
+        var veiculos = veiculoService.GetAll(page);
+        return Results.Ok(veiculos);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+});
 
 
 #endregion
