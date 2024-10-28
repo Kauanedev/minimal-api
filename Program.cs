@@ -140,7 +140,7 @@ app.MapDelete("/veiculos/{id}", ([FromQuery] int id, IVeiculoService veiculoServ
 
 #endregion
 
-#region Ap
+#region App
 app.UseSwagger();
 app.UseSwaggerUI();
 
