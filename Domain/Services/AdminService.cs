@@ -9,6 +9,28 @@ public class AdminService(DbContexto contexto) : IAdminService
 {
     private readonly DbContexto _contexto = contexto;
 
+    public Admin Create(Admin admin)
+    {
+        _contexto.Administradores.Add(admin);
+        _contexto.SaveChanges();
+
+        return admin;
+    }
+
+    public List<Admin> GetAll(int? page)
+    {
+        var query = _contexto.Administradores.AsQueryable();
+
+        // Paginação
+        int itensPorPagina = 10;
+        if (page != null)
+        {
+            int skipCount = ((int)page - 1) * itensPorPagina;
+            query = query.Skip(skipCount).Take(itensPorPagina);
+        }
+        return query.ToList();
+    }
+
     public Admin? Login(LoginDto loginDto)
     {
         var adm = _contexto.Administradores.Where
