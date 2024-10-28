@@ -5,13 +5,10 @@ using minimal_api.Infra.Database;
 
 namespace minimal_api.Domain.Services
 {
-    public class VeiculoService : IVeiculoService
+    public class VeiculoService(DbContexto contexto) : IVeiculoService
     {
-        private readonly DbContexto _contexto;
-        public VeiculoService(DbContexto contexto)
-        {
-            _contexto = contexto;
-        }
+        private readonly DbContexto _contexto = contexto;
+
         public void Create(Veiculo veiculo)
         {
             _contexto.Veiculos.Add(veiculo);

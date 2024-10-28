@@ -5,13 +5,10 @@ using minimal_api.Infra.Database;
 
 namespace minimal_api.Domain.Services;
 
-public class AdminService : IAdminService
+public class AdminService(DbContexto contexto) : IAdminService
 {
-    private readonly DbContexto _contexto;
-    public AdminService(DbContexto contexto)
-    {
-        _contexto = contexto;
-    }
+    private readonly DbContexto _contexto = contexto;
+
     public Admin? Login(LoginDto loginDto)
     {
         var adm = _contexto.Administradores.Where
