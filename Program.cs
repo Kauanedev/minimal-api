@@ -4,7 +4,7 @@ using minimal_api.Domain.Interfaces;
 using minimal_api.Domain.Services;
 using minimal_api.Infra.Database;
 using minimal_api.Domain.Dto;
-using minimal_api.Domain.MoedlViews;
+using minimal_api.Domain.ModelViews;
 using minimal_api.Domain.Entities;
 
 #region Builder

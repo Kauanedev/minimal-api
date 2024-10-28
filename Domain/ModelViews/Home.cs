@@ -1,4 +1,4 @@
-namespace minimal_api.Domain.MoedlViews
+namespace minimal_api.Domain.ModelViews
 {
     public struct Home
     {
