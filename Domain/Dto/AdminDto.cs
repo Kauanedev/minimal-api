@@ -6,6 +6,6 @@ namespace minimal_api.Domain.Dto
     {
         public required string Email { get; set; }
         public required string Password { get; set; }
-        public required PerfilEnum Perfil { get; set; }
+        public required PerfilEnum? Perfil { get; set; }
     }
 }

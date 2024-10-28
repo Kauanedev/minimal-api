@@ -40,7 +40,7 @@ static ErrorMessages ErrorDtoAdmin(AdminDto adminDto)
     var validation = new ErrorMessages { Messages = [] };
 
     if (string.IsNullOrEmpty(adminDto.Email)) validation.Messages.Add("O campo Email deve ser preenchido");
-    if (string.IsNullOrEmpty(adminDto.Perfil.ToString())) validation.Messages.Add("O campo Perfil deve ser preenchido");
+    if (adminDto.Perfil.ToString() == null) validation.Messages.Add("O campo Perfil deve ser preenchido");
     if (string.IsNullOrEmpty(adminDto.Password)) validation.Messages.Add("O campo Password deve ser preenchido");
 
     return validation;
