@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using minimal_api.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using minimal_api.Domain.Interfaces;
 using Minimal_api.Domain.Services;
 using minimal_api.Infra.Database;
 using minimal_api.Domain.Dto;
@@ -47,10 +47,24 @@ app.MapPost("/administradores/login",
 #endregion
 
 #region Veiculos
+static ErrorMessages ErrorDto(VeiculoDto veiculoDto)
+{
+    var validation = new ErrorMessages { Messages = [] };
+
+    if (string.IsNullOrEmpty(veiculoDto.Nome)) validation.Messages.Add("O campo Nome deve ser preenchido");
+    if (string.IsNullOrEmpty(veiculoDto.Marca)) validation.Messages.Add("O campo Marca deve ser preenchido");
+    if (veiculoDto.Ano <= 1950) validation.Messages.Add("O campo Ano é obrigatório e não pode ser um número negativo ou menor que 1950");
+
+    return validation;
+}
+
 app.MapPost("/veiculos", ([FromBody] VeiculoDto veiculoDto, IVeiculoService veiculoService) =>
 {
     try
     {
+        ErrorMessages validation = ErrorDto(veiculoDto);
+        if (validation.Messages.Count != 0) return Results.BadRequest(validation);
+
         var veiculo = new Veiculo
         {
             Nome = veiculoDto.Nome,
@@ -67,6 +81,7 @@ app.MapPost("/veiculos", ([FromBody] VeiculoDto veiculoDto, IVeiculoService veic
         return Results.Problem(ex.Message);
     }
 }).WithTags("Veiculos");
+
 
 app.MapGet("/veiculos", ([FromQuery] int? page, IVeiculoService veiculoService) =>
 {
@@ -101,9 +116,12 @@ app.MapPut("/veiculos/{id}", ([FromQuery] int id, VeiculoDto veiculoDto, IVeicul
 {
     try
     {
-        var veiculo = veiculoService.GetById(id);
 
+        var veiculo = veiculoService.GetById(id);
         if (veiculo == null) return Results.NotFound();
+
+        ErrorMessages validation = ErrorDto(veiculoDto);
+        if (validation.Messages.Count != 0) return Results.BadRequest(validation);
 
         veiculo.Nome = veiculoDto.Nome;
         veiculo.Marca = veiculoDto.Marca;
