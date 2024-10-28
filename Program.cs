@@ -34,6 +34,18 @@ app.MapGet("/", () => Results.Json(new Home())).WithTags("Home");
 
 
 #region Administradores 
+
+static ErrorMessages ErrorDtoAdmin(AdminDto adminDto)
+{
+    var validation = new ErrorMessages { Messages = [] };
+
+    if (string.IsNullOrEmpty(adminDto.Email)) validation.Messages.Add("O campo Email deve ser preenchido");
+    if (string.IsNullOrEmpty(adminDto.Perfil.ToString())) validation.Messages.Add("O campo Perfil deve ser preenchido");
+    if (string.IsNullOrEmpty(adminDto.Password)) validation.Messages.Add("O campo Password deve ser preenchido");
+
+    return validation;
+}
+
 app.MapPost("/administradores/login",
 ([FromBody] LoginDto loginDto, IAdminService adminService) =>
 {
@@ -43,10 +55,35 @@ app.MapPost("/administradores/login",
     else return Results.Unauthorized();
 
 }).WithTags("Administradores");
+
+app.MapPost("/administradores",
+([FromBody] AdminDto adminDto, IAdminService adminService) =>
+{
+    try
+    {
+        ErrorMessages validation = ErrorDtoAdmin(adminDto);
+        if (validation.Messages.Count != 0) return Results.BadRequest(validation);
+
+        var admin = new Admin
+        {
+            Email = adminDto.Email,
+            Perfil = adminDto.Perfil.ToString(),
+            Password = adminDto.Password
+        };
+
+        return Results.Created($"/veiculo/{admin.Id}", admin);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+
+}).WithTags("Administradores");
+
 #endregion
 
 #region Veiculos
-static ErrorMessages ErrorDto(VeiculoDto veiculoDto)
+static ErrorMessages ErrorDtoVeiculos(VeiculoDto veiculoDto)
 {
     var validation = new ErrorMessages { Messages = [] };
 
@@ -61,7 +98,7 @@ app.MapPost("/veiculos", ([FromBody] VeiculoDto veiculoDto, IVeiculoService veic
 {
     try
     {
-        ErrorMessages validation = ErrorDto(veiculoDto);
+        ErrorMessages validation = ErrorDtoVeiculos(veiculoDto);
         if (validation.Messages.Count != 0) return Results.BadRequest(validation);
 
         var veiculo = new Veiculo
@@ -119,7 +156,7 @@ app.MapPut("/veiculos/{id}", ([FromQuery] int id, VeiculoDto veiculoDto, IVeicul
         var veiculo = veiculoService.GetById(id);
         if (veiculo == null) return Results.NotFound();
 
-        ErrorMessages validation = ErrorDto(veiculoDto);
+        ErrorMessages validation = ErrorDtoVeiculos(veiculoDto);
         if (validation.Messages.Count != 0) return Results.BadRequest(validation);
 
         veiculo.Nome = veiculoDto.Nome;
