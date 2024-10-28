@@ -3,7 +3,7 @@ using minimal_api.Domain.Interfaces;
 using minimal_api.Domain.Dto;
 using minimal_api.Infra.Database;
 
-namespace Minimal_api.Domain.Services;
+namespace minimal_api.Domain.Services;
 
 public class AdminService : IAdminService
 {
