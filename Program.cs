@@ -145,7 +145,7 @@ app.MapGet("/administradores", ([FromQuery] int? page, IAdminService adminServic
     {
         return Results.Problem(ex.Message);
     }
-}).WithTags("Administradores");
+}).RequireAuthorization().WithTags("Administradores");
 
 app.MapGet("/administradores/{id}", ([FromQuery] string id, IAdminService adminService) =>
 {
@@ -166,7 +166,7 @@ app.MapGet("/administradores/{id}", ([FromQuery] string id, IAdminService adminS
     {
         return Results.Problem(ex.Message);
     }
-}).WithTags("Administradores");
+}).RequireAuthorization().WithTags("Administradores");
 
 #endregion
 
@@ -204,7 +204,7 @@ app.MapPost("/veiculos", ([FromBody] VeiculoDto veiculoDto, IVeiculoService veic
     {
         return Results.Problem(ex.Message);
     }
-}).WithTags("Veiculos");
+}).RequireAuthorization().WithTags("Veiculos");
 
 
 app.MapGet("/veiculos", ([FromQuery] int? page, IVeiculoService veiculoService) =>
@@ -218,7 +218,7 @@ app.MapGet("/veiculos", ([FromQuery] int? page, IVeiculoService veiculoService) 
     {
         return Results.Problem(ex.Message);
     }
-}).WithTags("Veiculos");
+}).RequireAuthorization().WithTags("Veiculos");
 
 app.MapGet("/veiculos/{id}", ([FromQuery] int id, IVeiculoService veiculoService) =>
 {
@@ -234,7 +234,7 @@ app.MapGet("/veiculos/{id}", ([FromQuery] int id, IVeiculoService veiculoService
     {
         return Results.Problem(ex.Message);
     }
-}).WithTags("Veiculos");
+}).RequireAuthorization().WithTags("Veiculos");
 
 app.MapPut("/veiculos/{id}", ([FromQuery] int id, VeiculoDto veiculoDto, IVeiculoService veiculoService) =>
 {
@@ -259,7 +259,7 @@ app.MapPut("/veiculos/{id}", ([FromQuery] int id, VeiculoDto veiculoDto, IVeicul
     {
         return Results.Problem(ex.Message);
     }
-}).WithTags("Veiculos");
+}).RequireAuthorization().WithTags("Veiculos");
 
 app.MapDelete("/veiculos/{id}", ([FromQuery] int id, IVeiculoService veiculoService) =>
 {
@@ -277,7 +277,7 @@ app.MapDelete("/veiculos/{id}", ([FromQuery] int id, IVeiculoService veiculoServ
     {
         return Results.Problem(ex.Message);
     }
-}).WithTags("Veiculos");
+}).RequireAuthorization().WithTags("Veiculos");
 
 
 #endregion
