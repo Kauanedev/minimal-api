@@ -10,14 +10,14 @@ using minimal_api.Domain.ModelViews;
 using minimal_api.Domain.Entities;
 using minimal_api.Domain.Enums;
 using System.IdentityModel.Tokens.Jwt;
-using Org.BouncyCastle.Cms;
 using System.Security.Claims;
+using Microsoft.OpenApi.Models;
 
 #region Builder
 var builder = WebApplication.CreateBuilder(args);
 
-var key = builder.Configuration.GetSection("Jwt").ToString();
-if (string.IsNullOrEmpty(key)) key = "chave_secreta";
+var key = builder.Configuration["Jwt:Key"];
+if (string.IsNullOrEmpty(key)) key = "secret_key";
 
 builder.Services.AddAuthentication(option =>
 {
@@ -29,6 +29,8 @@ builder.Services.AddAuthentication(option =>
     {
         ValidateLifetime = true,
         IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(key)),
+        ValidateIssuer = false,
+        ValidateAudience = false
     };
 });
 
@@ -38,7 +40,35 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IVeiculoService, VeiculoService>();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        In = ParameterLocation.Header,
+        Description = "Insira o token JWT",
+        Scheme = "bearer",
+        BearerFormat = "JWT"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
+});
+
+
 
 builder.Services.AddDbContext<DbContexto>(options =>
 {
@@ -59,7 +89,7 @@ app.MapGet("/", () => Results.Json(new Home())).WithTags("Home");
 
 string createJwtToken(Admin admin)
 {
-    if (!string.IsNullOrEmpty(key)) return string.Empty;
+    if (string.IsNullOrEmpty(key)) throw new InvalidOperationException("A chave JWT está vazia.");
 
     var securitykey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(key));
     var credentials = new SigningCredentials(securitykey, SecurityAlgorithms.HmacSha256);
@@ -74,7 +104,7 @@ string createJwtToken(Admin admin)
     var token = new JwtSecurityToken
     (
         claims: claims,
-        expires: DateTime.Now.AddMinutes(30),
+        expires: DateTime.Now.AddDays(1),
         signingCredentials: credentials);
 
     return new JwtSecurityTokenHandler().WriteToken(token);
