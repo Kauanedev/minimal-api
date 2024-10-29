@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using minimal_api.Domain.Interfaces;
 using minimal_api.Domain.Services;
 using minimal_api.Infra.Database;
@@ -10,6 +12,24 @@ using minimal_api.Domain.Enums;
 
 #region Builder
 var builder = WebApplication.CreateBuilder(args);
+
+var key = builder.Configuration.GetSection("Jwt").ToString();
+if (string.IsNullOrEmpty(key)) key = "chave_secreta";
+
+builder.Services.AddAuthentication(option =>
+{
+    option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(option =>
+{
+    option.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateLifetime = true,
+        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(key)),
+    };
+});
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IVeiculoService, VeiculoService>();
@@ -265,6 +285,10 @@ app.MapDelete("/veiculos/{id}", ([FromQuery] int id, IVeiculoService veiculoServ
 #region App
 app.UseSwagger();
 app.UseSwaggerUI();
+
+//ordem é importante!
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.Run();
 #endregion
