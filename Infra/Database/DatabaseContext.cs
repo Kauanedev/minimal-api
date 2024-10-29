@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using minimal_api.Domain.Entities;
+using minimal_api.Domain.Enums;
 
 namespace minimal_api.Infra.Database
 {
@@ -12,7 +13,6 @@ namespace minimal_api.Infra.Database
             _configuracaoAppSettings = configuracaoAppSettings;
         }
 
-
         public DbSet<Admin> Administradores { get; set; } = default!;
         public DbSet<Veiculo> Veiculos { get; set; } = default!;
 
@@ -21,23 +21,24 @@ namespace minimal_api.Infra.Database
             modelBuilder.Entity<Admin>().HasData(
                 new Admin
                 {
-                    Id = 1,
+                    Id = Guid.NewGuid().ToString(),
                     Email = "admin@email.com",
                     Password = "123456",
-                    Perfil = "Adm"
+                    Perfil = PerfilEnum.Admin
                 }
             );
         }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                var stringConexao = _configuracaoAppSettings.GetConnectionString("DefaultConnection")?.ToString();
+                var stringConexao = _configuracaoAppSettings.GetConnectionString("DefaultConnection");
                 if (!string.IsNullOrEmpty(stringConexao))
                     optionsBuilder.UseMySql(
                         stringConexao,
                         ServerVersion.AutoDetect(stringConexao)
-                        );
+                    );
             }
         }
     }

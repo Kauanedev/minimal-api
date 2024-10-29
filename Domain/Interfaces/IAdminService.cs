@@ -8,6 +8,6 @@ namespace minimal_api.Domain.Interfaces
         Admin? Login(LoginDto loginDto);
         Admin Create(Admin admin);
         List<Admin> GetAll(int? page);
-        Admin? GetById(int id);
+        Admin? GetById(string id);
     }
 }

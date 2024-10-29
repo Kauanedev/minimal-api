@@ -50,12 +50,25 @@ static ErrorMessages ErrorDtoAdmin(AdminDto adminDto)
 app.MapPost("/administradores/login",
 ([FromBody] LoginDto loginDto, IAdminService adminService) =>
 {
-    if (adminService.Login(loginDto) != null)
-        return Results.Ok("Login realizado com sucesso!");
+    // Chama o método de login
+    var admin = adminService.Login(loginDto);
 
-    else return Results.Unauthorized();
+    if (admin != null)
+    {
+        // Se encontrado, mapeia para AdminModelView
+        var adminModelView = new AdminModelView
+        {
+            Id = admin.Id,
+            Email = admin.Email,
+            Perfil = admin.Perfil
+        };
+        return Results.Ok(adminModelView);
+    }
 
+    return Results.Unauthorized();
 }).WithTags("Administradores");
+
+
 
 app.MapPost("/administradores",
 ([FromBody] AdminDto adminDto, IAdminService adminService) =>
@@ -69,11 +82,13 @@ app.MapPost("/administradores",
             var admin = new Admin
             {
                 Email = adminDto.Email,
-                Perfil = adminDto.Perfil.ToString() ?? PerfilEnum.Edit.ToString(),
+                Perfil = PerfilEnum.Admin,
                 Password = adminDto.Password
             };
-            return Results.Created($"/veiculo", admin);
+            adminService.Create(admin);
 
+
+            return Results.Created($"/veiculo", admin);
         }
     }
     catch (Exception ex)
@@ -83,12 +98,24 @@ app.MapPost("/administradores",
 
 }).WithTags("Administradores");
 
-app.MapGet("/administradores", ([FromQuery] int? page, IAdminService adminIAdminService) =>
+app.MapGet("/administradores", ([FromQuery] int? page, IAdminService adminService) =>
 {
     try
     {
-        var admin = adminIAdminService.GetAll(page);
-        return Results.Ok(admin);
+        var adminList = new List<AdminModelView>();
+        var adminReturn = adminService.GetAll(page);
+
+        foreach (var admin in adminReturn)
+        {
+            var adminModelView = new AdminModelView
+            {
+                Id = admin.Id,
+                Email = admin.Email,
+                Perfil = admin.Perfil,
+            };
+            adminList.Add(adminModelView);
+        }
+        return Results.Ok(adminList);
     }
     catch (Exception ex)
     {
@@ -96,7 +123,7 @@ app.MapGet("/administradores", ([FromQuery] int? page, IAdminService adminIAdmin
     }
 }).WithTags("Administradores");
 
-app.MapGet("/administradores/{id}", ([FromQuery] int id, IAdminService adminService) =>
+app.MapGet("/administradores/{id}", ([FromQuery] string id, IAdminService adminService) =>
 {
     try
     {

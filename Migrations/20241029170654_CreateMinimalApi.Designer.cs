@@ -11,8 +11,8 @@ using minimal_api.Infra.Database;
 namespace minimal_api.Migrations
 {
     [DbContext(typeof(DbContexto))]
-    [Migration("20241026210245_create_veiculo")]
-    partial class create_veiculo
+    [Migration("20241029170654_CreateMinimalApi")]
+    partial class CreateMinimalApi
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,11 +26,8 @@ namespace minimal_api.Migrations
 
             modelBuilder.Entity("minimal_api.Domain.Entities.Admin", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -42,10 +39,9 @@ namespace minimal_api.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<string>("Perfil")
-                        .IsRequired()
+                    b.Property<int>("Perfil")
                         .HasMaxLength(10)
-                        .HasColumnType("varchar(10)");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -54,10 +50,10 @@ namespace minimal_api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            Id = "962ecb22-aac6-426c-8c96-2662dade74d5",
                             Email = "admin@email.com",
                             Password = "123456",
-                            Perfil = "Adm"
+                            Perfil = 0
                         });
                 });
 

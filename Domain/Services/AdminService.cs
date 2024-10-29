@@ -2,6 +2,7 @@ using minimal_api.Domain.Entities;
 using minimal_api.Domain.Interfaces;
 using minimal_api.Domain.Dto;
 using minimal_api.Infra.Database;
+using minimal_api.Domain.ModelViews;
 
 namespace minimal_api.Domain.Services;
 
@@ -31,7 +32,7 @@ public class AdminService(DbContexto contexto) : IAdminService
         return query.ToList();
     }
 
-    public Admin? GetById(int id)
+    public Admin? GetById(string id)
     {
         return _contexto.Administradores.Where(v => v.Id == id).FirstOrDefault();
     }
@@ -45,11 +46,17 @@ public class AdminService(DbContexto contexto) : IAdminService
 
     public Admin? Login(LoginDto loginDto)
     {
-        var adm = _contexto.Administradores.Where
-        (a => a.Email == loginDto.Email && a.Password == loginDto.Password)
-        .FirstOrDefault();
+        // Verifica se os dados de entrada são válidos
+        if (loginDto == null || string.IsNullOrWhiteSpace(loginDto.Email) || string.IsNullOrWhiteSpace(loginDto.Password))
+        {
+            throw new ArgumentException("Dados de login inválidos.");
+        }
 
-        return adm;
+        // Busca o administrador no banco de dados
+        var admin = _contexto.Administradores
+            .FirstOrDefault(a => a.Email == loginDto.Email && a.Password == loginDto.Password);
+
+        return admin;
     }
 
 }

@@ -1,8 +1,18 @@
 @MininalsApi_HostAddress = http://localhost:5152
 
+### Post
+POST {{MininalsApi_HostAddress}}/administradores
+Accept: application/json
+Content-Type: application/json
 
-# @name login
-POST {{MininalsApi_HostAddress}}/login
+{
+"email" : "admin@email.com",
+"password": "123456",
+"perfil": "Admin"
+}
+
+### Login
+POST {{MininalsApi_HostAddress}}/administradores/login
 Accept: application/json
 Content-Type: application/json
 
@@ -11,3 +21,6 @@ Content-Type: application/json
 "password": "123456"
 }
 
+### GetAll
+GET {{MininalsApi_HostAddress}}/administradores
+Accept: application/json
