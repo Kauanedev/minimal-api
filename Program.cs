@@ -6,6 +6,7 @@ using minimal_api.Infra.Database;
 using minimal_api.Domain.Dto;
 using minimal_api.Domain.ModelViews;
 using minimal_api.Domain.Entities;
+using minimal_api.Domain.Enums;
 
 #region Builder
 var builder = WebApplication.CreateBuilder(args);
@@ -64,20 +65,51 @@ app.MapPost("/administradores",
         ErrorMessages validation = ErrorDtoAdmin(adminDto);
         if (validation.Messages.Count != 0) return Results.BadRequest(validation);
 
-        var admin = new Admin
         {
-            Email = adminDto.Email,
-            Perfil = adminDto.Perfil.ToString(),
-            Password = adminDto.Password
-        };
+            var admin = new Admin
+            {
+                Email = adminDto.Email,
+                Perfil = adminDto.Perfil.ToString() ?? PerfilEnum.Edit.ToString(),
+                Password = adminDto.Password
+            };
+            return Results.Created($"/veiculo", admin);
 
-        return Results.Created($"/veiculo/{admin.Id}", admin);
+        }
     }
     catch (Exception ex)
     {
         return Results.Problem(ex.Message);
     }
 
+}).WithTags("Administradores");
+
+app.MapGet("/administradores", ([FromQuery] int? page, IAdminService adminIAdminService) =>
+{
+    try
+    {
+        var admin = adminIAdminService.GetAll(page);
+        return Results.Ok(admin);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+}).WithTags("Administradores");
+
+app.MapGet("/administradores/{id}", ([FromQuery] int id, IAdminService adminService) =>
+{
+    try
+    {
+        var admin = adminService.GetById(id);
+
+        if (admin == null) return Results.NotFound();
+
+        return Results.Ok(admin);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
 }).WithTags("Administradores");
 
 #endregion
