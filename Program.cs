@@ -9,6 +9,9 @@ using minimal_api.Domain.Dto;
 using minimal_api.Domain.ModelViews;
 using minimal_api.Domain.Entities;
 using minimal_api.Domain.Enums;
+using System.IdentityModel.Tokens.Jwt;
+using Org.BouncyCastle.Cms;
+using System.Security.Claims;
 
 #region Builder
 var builder = WebApplication.CreateBuilder(args);
@@ -54,6 +57,29 @@ app.MapGet("/", () => Results.Json(new Home())).WithTags("Home");
 
 #region Administradores 
 
+string createJwtToken(Admin admin)
+{
+    if (!string.IsNullOrEmpty(key)) return string.Empty;
+
+    var securitykey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(key));
+    var credentials = new SigningCredentials(securitykey, SecurityAlgorithms.HmacSha256);
+
+    var claims = new[]
+    {
+        new Claim(ClaimTypes.NameIdentifier, admin.Id.ToString()),
+        new Claim(ClaimTypes.Email, admin.Email),
+        new Claim(ClaimTypes.Role, admin.Perfil.ToString())
+    };
+
+    var token = new JwtSecurityToken
+    (
+        claims: claims,
+        expires: DateTime.Now.AddMinutes(30),
+        signingCredentials: credentials);
+
+    return new JwtSecurityTokenHandler().WriteToken(token);
+}
+
 static ErrorMessages ErrorDtoAdmin(AdminDto adminDto)
 {
     var validation = new ErrorMessages { Messages = [] };
@@ -68,22 +94,31 @@ static ErrorMessages ErrorDtoAdmin(AdminDto adminDto)
 app.MapPost("/administradores/login",
 ([FromBody] LoginDto loginDto, IAdminService adminService) =>
 {
-    // Chama o método de login
-    var admin = adminService.Login(loginDto);
+    try
+    {    // Chama o método de login
+        var admin = adminService.Login(loginDto);
 
-    if (admin != null)
-    {
-        // Se encontrado, mapeia para AdminModelView
-        var adminModelView = new AdminModelView
+        if (admin != null)
         {
-            Id = admin.Id,
-            Email = admin.Email,
-            Perfil = admin.Perfil
-        };
-        return Results.Ok(adminModelView);
-    }
+            string token = createJwtToken(admin);
+            var adminReturn = new LoggedAdminModelView
+            {
+                Id = admin.Id,
+                Email = admin.Email,
+                Perfil = admin.Perfil,
+                Token = token
+            };
 
-    return Results.Unauthorized();
+            return Results.Ok(adminReturn);
+        }
+
+        return Results.Unauthorized();
+
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
 }).WithTags("Administradores");
 
 
