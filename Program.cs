@@ -28,11 +28,9 @@ builder.Services.AddDbContext<DbContexto>(options =>
 var app = builder.Build();
 #endregion
 
-
 #region Home
 app.MapGet("/", () => Results.Json(new Home())).WithTags("Home");
 #endregion
-
 
 #region Administradores 
 
@@ -87,8 +85,14 @@ app.MapPost("/administradores",
             };
             adminService.Create(admin);
 
+            var adminReturn = new AdminModelView
+            {
+                Id = admin.Id,
+                Email = admin.Email,
+                Perfil = admin.Perfil
+            };
 
-            return Results.Created($"/veiculo", admin);
+            return Results.Created($"/veiculo", adminReturn);
         }
     }
     catch (Exception ex)
@@ -131,7 +135,12 @@ app.MapGet("/administradores/{id}", ([FromQuery] string id, IAdminService adminS
 
         if (admin == null) return Results.NotFound();
 
-        return Results.Ok(admin);
+        return Results.Ok(new AdminModelView
+        {
+            Id = admin.Id,
+            Email = admin.Email,
+            Perfil = admin.Perfil
+        });
     }
     catch (Exception ex)
     {
