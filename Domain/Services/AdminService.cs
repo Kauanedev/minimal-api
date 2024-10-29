@@ -31,6 +31,18 @@ public class AdminService(DbContexto contexto) : IAdminService
         return query.ToList();
     }
 
+    public Admin? GetById(int id)
+    {
+        return _contexto.Administradores.Where(v => v.Id == id).FirstOrDefault();
+    }
+
+
+    public void Update(Veiculo veiculo)
+    {
+        _contexto.Veiculos.Update(veiculo);
+        _contexto.SaveChanges();
+    }
+
     public Admin? Login(LoginDto loginDto)
     {
         var adm = _contexto.Administradores.Where
