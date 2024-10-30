@@ -13,8 +13,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authorization;
-using System.Text.Json.Serialization;
-using System.Text.Json;
 
 #region Builder
 var builder = WebApplication.CreateBuilder(args);
@@ -117,7 +115,7 @@ static ErrorMessages ErrorDtoAdmin(AdminDto adminDto)
     var validation = new ErrorMessages { Messages = [] };
 
     if (string.IsNullOrEmpty(adminDto.Email)) validation.Messages.Add("O campo Email deve ser preenchido");
-    if (adminDto.Perfil.ToString() == null) validation.Messages.Add("O campo Perfil deve ser preenchido");
+    if (adminDto.Perfil == null) validation.Messages.Add("O campo Perfil deve ser preenchido");
     if (string.IsNullOrEmpty(adminDto.Password)) validation.Messages.Add("O campo Password deve ser preenchido");
 
     return validation;
@@ -132,14 +130,15 @@ app.MapPost("/administradores/login",
 
         if (admin != null)
         {
-            var perfilEnum = (PerfilEnum)Enum.Parse(typeof(PerfilEnum), admin.Perfil.ToString());
+            var perfilEnum = 0;
+            if (admin.Perfil == PerfilEnum.Editor) perfilEnum = 1;
 
             string token = createJwtToken(admin);
             var adminReturn = new LoggedAdminModelView
             {
                 Id = admin.Id,
                 Email = admin.Email,
-                Perfil = perfilEnum,
+                Perfil = (PerfilEnum)perfilEnum,
                 Token = token
 
             };

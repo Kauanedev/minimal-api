@@ -18,7 +18,7 @@ namespace minimal_api.Domain.Entities
         [Required]
         public string Password { get; set; } = default!;
 
-        [StringLength(10)]
+        [Range(0, 2)]
         public PerfilEnum Perfil { get; set; } = default!;
 
     }
