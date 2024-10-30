@@ -13,6 +13,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 #region Builder
 var builder = WebApplication.CreateBuilder(args);
@@ -68,8 +70,6 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
-
-
 
 builder.Services.AddDbContext<DbContexto>(options =>
 {
@@ -132,13 +132,16 @@ app.MapPost("/administradores/login",
 
         if (admin != null)
         {
+            var perfilEnum = (PerfilEnum)Enum.Parse(typeof(PerfilEnum), admin.Perfil.ToString());
+
             string token = createJwtToken(admin);
             var adminReturn = new LoggedAdminModelView
             {
                 Id = admin.Id,
                 Email = admin.Email,
-                Perfil = admin.Perfil,
+                Perfil = perfilEnum,
                 Token = token
+
             };
 
             return Results.Ok(adminReturn);
@@ -160,14 +163,18 @@ app.MapPost("/administradores",
 {
     try
     {
+        var perfilEnum = 0;
+        if (adminDto.Perfil == null) adminDto.Perfil = PerfilEnum.Admin;
+        if (adminDto.Perfil.HasValue && adminDto.Perfil.Value == PerfilEnum.Editor) perfilEnum = 1;
+
+
         ErrorMessages validation = ErrorDtoAdmin(adminDto);
         if (validation.Messages.Count != 0) return Results.BadRequest(validation);
-
         {
             var admin = new Admin
             {
                 Email = adminDto.Email,
-                Perfil = PerfilEnum.Admin,
+                Perfil = (PerfilEnum)perfilEnum,
                 Password = adminDto.Password
             };
             adminService.Create(admin);
