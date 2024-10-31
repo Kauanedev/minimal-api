@@ -18,6 +18,10 @@ namespace minimal_api.Infra.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Admin>()
+            .Property(a => a.Perfil) // adiciona a conversão
+            .HasConversion<int>(); // Adiciona conversão para int
+
             modelBuilder.Entity<Admin>().HasData(
                 new Admin
                 {
