@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using minimal_api.Domain.Entities;
+using minimal_api.Domain.Enums;
 
 namespace Test.Domain.Entities
 {
@@ -22,14 +23,14 @@ namespace Test.Domain.Entities
             admin.Id = "fc82e878-92b5-43ea-bbb3-d09a1297c1b0";
             admin.Email = "john.doe@example.com";
             admin.Password = "password123";
-            admin.Perfil = 0;
+            admin.Perfil = (PerfilEnum)1;
 
             // Assert
             // Verifica se as propriedades foram definidas corretamente
             Assert.AreEqual<string>("fc82e878-92b5-43ea-bbb3-d09a1297c1b0", admin.Id);
             Assert.AreEqual<string>("john.doe@example.com", admin.Email);
             Assert.AreEqual<string>("password123", admin.Password);
-            Assert.AreEqual<int>(0, (int)admin.Perfil);
+            Assert.AreEqual<int>(1, (int)admin.Perfil);
 
         }
 
