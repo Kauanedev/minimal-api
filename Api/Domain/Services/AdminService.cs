@@ -2,7 +2,6 @@ using minimal_api.Domain.Entities;
 using minimal_api.Domain.Interfaces;
 using minimal_api.Domain.Dto;
 using minimal_api.Infra.Database;
-using minimal_api.Domain.ModelViews;
 
 namespace minimal_api.Domain.Services;
 
